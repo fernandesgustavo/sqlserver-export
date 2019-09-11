@@ -8,12 +8,13 @@ from datetime import date
 
 class SqlServer:
 
-    def __init__(self, server, user, passwd, db):
+    def __init__(self, server, user, passwd, db, directory):
         
         self.__server = server
         self.__user = user
         self.__passwd = passwd
         self.__db = db
+        self.__directory = directory
         self.__connection = False
 
     def convertIp(self, ip_decimal):
@@ -73,7 +74,7 @@ class SqlServer:
             
             line += 1
         
-        wb.save('hardware-{}.xls'.format(today))
+        wb.save('{}hardware-{}.xls'.format(self.__directory, today))
     
     def exportSoftware(self):
         query = 'SELECT H.wstrWinName, H.nIP, A.wstrDisplayName, A.wstrBuild, A.wstrPublisher, A.tmInstallDate FROM v_akpub_host AS H INNER JOIN v_akpub_application AS A ON A.nHostId = H.nId ORDER BY H.wstrWinName'
@@ -106,7 +107,7 @@ class SqlServer:
             
             line += 1
         
-        wb.save('software-{}.xls'.format(today))
+        wb.save('{}software-{}.xls'.format(self.__directory, today))
 
 if __name__ == '__main__':
 
@@ -114,9 +115,10 @@ if __name__ == '__main__':
     user = sys.argv[2]
     passwd = sys.argv[3]
     db = sys.argv[4]
-    report = sys.argv[5]
+    directory = sys.argv[5]
+    report = sys.argv[6]
 
-    sqlserver = SqlServer(server, user, passwd, db)
+    sqlserver = SqlServer(server, user, passwd, db, directory)
 
     if report == 'hardware':
         sqlserver.exportHardware()
